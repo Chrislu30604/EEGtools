@@ -1,0 +1,28 @@
+import pywt
+import math
+from scipy.fftpack import fft
+
+THRESHOLD = 15
+MODE = 'constant'
+CUT = 'soft'
+
+
+class eeghandler():
+
+    def __init__(self, freq, x, y):
+        self.freq = freq
+        self.x = x
+        self.y = y
+
+    def wavelets_tf(self):
+        db4 = pywt.Wavelet('db4')
+        level = round((math(self.freq, 2)))
+        coeffs = pywt.wavedec(self.y, db4, mode=MODE, level=level)
+        res = pywt.threshold(coeffs[1], THRESHOLD, CUT)
+        return res
+
+    def fft_tf(self, data):
+        T = 1 / self.freq
+        yf = fft(data)
+        return yf
+
